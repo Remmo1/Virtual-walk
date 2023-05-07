@@ -22,7 +22,7 @@ const req = require.context('./animation');
 req.keys().forEach((key) => {
   animationFrames[key] = req(key);
 });
-const ANIMATION_SPEED = 100                // miliseconds
+const ANIMATION_SPEED = 60                // miliseconds
 
 const STAGE_ONE_FRAMES_AMOUNT = 150;      // 0 -> 1
 const STAGE_TWO_FRAMES_AMOUNT = 176;      // 0 -> 2
@@ -95,7 +95,8 @@ function App() {
 
   const onButtonClick = (stageNumber, buttonLabel) => {
 
-    console.log(stageNumber);
+    console.log(currentStage);
+    console.log(stage);
     console.log(buttonLabel);
 
     // Go Back to menu
@@ -122,17 +123,16 @@ function App() {
       setStage(1);
       setCurrentStage(1);
       setTitleVisible(false);
+      setFirstButtonLabel('Menu');
 
       // Go to first stage from menu
       if (stageNumber == 0) {
-        setFirstButtonLabel('Menu');
         playAnimation(STAGE_ONE_FRAMES_AMOUNT, 1, firstLocation);
       } 
       // Go back to first stage from second stage
       // Stage = 4 is animation from 1 to 2
       else if (stageNumber == 2) {
         setSecondButtonLabel('Stage2');
-        setFirstButtonLabel('Menu');
         setStage(4);
         playReverseAnimation(STAGE_FOUR_FRAMES_AMOUNT, 4, firstLocation);
       }
@@ -140,7 +140,6 @@ function App() {
       // Stage = 5 is animation from 1 to 3
       else {
         setThirdButtonLabel('Stage3');
-        setFirstButtonLabel('Menu');
         setStage(5);
         playReverseAnimation(STAGE_FIVE_FRAMES_AMOUNT, 5, firstLocation);
       }
@@ -150,17 +149,16 @@ function App() {
       setTitleVisible(false);
       setStage(2);
       setCurrentStage(2);
+      setSecondButtonLabel('Menu');
 
       // Go to second stage from menu
       if (stageNumber == 0) {
-        setSecondButtonLabel('Menu');
         playAnimation(STAGE_TWO_FRAMES_AMOUNT, 2, secondLocation);
       } 
       // Go to second stage from first stage
       // Stage = 4 is animation from 1 to 2
       else if (stageNumber == 1) {
         setFirstButtonLabel('Stage1');
-        setSecondButtonLabel('Menu');
         setStage(4);
         playAnimation(STAGE_FOUR_FRAMES_AMOUNT, 4, secondLocation);
       }
@@ -168,7 +166,6 @@ function App() {
       // Stage = 6 is animation from 2 to 3
       else {
         setThirdButtonLabel('Stage3');
-        setSecondButtonLabel('Menu');
         setStage(6);
         playReverseAnimation(STAGE_SIX_FRAMES_AMOUNT, 6, secondLocation);
       }
@@ -205,21 +202,21 @@ function App() {
     setIsMinimapVisible(!isMinimapVisible);
   };  
 
-  const handleMinimapClick = (event) => {
+  const handleMinimapMove = (event) => {
     html2canvas(minimapRef.current).then(canvas => {
       let x = event.clientX;
       let y = event.clientY;
       
-      if (isInStage(1, x, y) == 1) {
+      if (currentStage != 1 && isInStage(1, x, y) == 1) {
         setActualMinimap(minimapDrawS1);
       }
-      else if (isInStage(2, x, y) == 2) {
+      else if (currentStage != 2 && isInStage(2, x, y) == 2) {
         setActualMinimap(minimapDrawS2);
       }
-      else if (isInStage(3, x, y) == 3) {
+      else if (currentStage != 3 && isInStage(3, x, y) == 3) {
         setActualMinimap(minimapDrawS3);
       }
-      else if (isInStage(0, x, y) == 0) {
+      else if (currentStage != 0 && isInStage(0, x, y) == 0) {
         setActualMinimap(minimapDrawMenu);
       }
       else {
@@ -227,6 +224,30 @@ function App() {
       }
     });
   };
+
+  const handleMinimapClick = (event) => {
+    html2canvas(minimapRef.current).then(canvas => {
+      let x = event.clientX;
+      let y = event.clientY;
+      
+      if (currentStage != 1 && isInStage(1, x, y) == 1) {
+        toggleMinimap();
+        onButtonClick(currentStage, 'Stage1');
+      }
+      else if (currentStage != 2 && isInStage(2, x, y) == 2) {
+        toggleMinimap();
+        onButtonClick(currentStage, 'Stage2');
+      }
+      else if (currentStage != 3 && isInStage(3, x, y) == 3) {
+        toggleMinimap();
+        onButtonClick(currentStage, 'Stage3');
+      }
+      else if (currentStage != 0 && isInStage(0, x, y) == 0) {
+        toggleMinimap();
+        onButtonClick(currentStage, 'Menu');
+      }
+    })
+  }
 
   function isInStage(stage, x, y) {
     if (stage == 1 && x >= STAGE_ONE_X_Y[0] && x <= STAGE_ONE_X_Y[1] && y >= STAGE_ONE_X_Y[2] && y <= STAGE_ONE_X_Y[3]) {
@@ -278,7 +299,7 @@ function App() {
           <img src={comeBack} alt="Comeback" />
         </button>
         <div className="minimap-container" ref={minimapRef}>
-          <img src={actualMinimap} alt="minmap" onMouseMove={handleMinimapClick}/>
+          <img src={actualMinimap} alt="minmap" onMouseMove={handleMinimapMove} onMouseDown={handleMinimapClick}/>
         </div>
 
       </div>
