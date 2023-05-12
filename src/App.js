@@ -33,7 +33,7 @@ const STAGE_ONE_NAME = 'Salon';
 const STAGE_TWO_NAME = 'Kuchnia';
 const STAGE_THREE_NAME = 'Pracownia';
 
-const ANIMATION_SPEED = 75;                // miliseconds
+const ANIMATION_SPEED = 60;                // miliseconds
 
 const STAGE_ONE_FRAMES_AMOUNT = 151;      // 0 -> 1
 const STAGE_TWO_FRAMES_AMOUNT = 176;      // 0 -> 2
@@ -73,6 +73,7 @@ function App() {
   const [stage, setStage] = useState(0);
   const [currentStage, setCurrentStage] = useState(0);
   const [titleVisible, setTitleVisible] = useState(true);
+  const [titleName, setTitleName] = useState('Sklep');
 
   const [firstButtonLabel, setFirstButtonLabel] = useState(STAGE_ONE_NAME);
   const [secondButtonLabel, setSecondButtonLabel] = useState(STAGE_TWO_NAME);
@@ -137,6 +138,7 @@ function App() {
     // Go Back to menu
     if (buttonLabel === 'Menu') {
       setCurrentStage(0);
+      setTitleName('Sklep');
       setTitleVisible(false);
       if (stageNumber == 1) {
         setStage(1);
@@ -159,6 +161,7 @@ function App() {
       setCurrentStage(1);
       setTitleVisible(false);
       setFirstButtonLabel('Menu');
+      setTitleName('Salon');
 
       // Go to first stage from menu
       if (stageNumber == 0) {
@@ -185,6 +188,7 @@ function App() {
       setStage(2);
       setCurrentStage(2);
       setSecondButtonLabel('Menu');
+      setTitleName('Kuchnia');
 
       // Go to second stage from menu
       if (stageNumber == 0) {
@@ -211,6 +215,7 @@ function App() {
       setCurrentStage(3);
       setTitleVisible(false);
       setThirdButtonLabel('Menu');
+      setTitleName('Pracownia');
 
       // Go to third stage from menu
       if (stageNumber == 0) {
@@ -417,7 +422,7 @@ function App() {
       {/* Main app */}
       <div className="minimap" style={{ display: !isMinimapVisible ? 'block' : 'none' }}>
         <div className="title" style={{ display: titleVisible ? 'block' : 'none' }}>
-          <h1>Sklep</h1>
+          <h1>{titleName}</h1>
         </div>
         <button className="map-button" onClick={toggleMinimap}>
           <img className="minimap-icon" src={minimap} alt="Map"/>
